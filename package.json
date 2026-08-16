@@ -1,0 +1,87 @@
+{
+  "name": "cldr-person-names",
+  "version": "1.0.0",
+  "description": "Format personal names following Unicode UTS #35 (LDML) Part 8: Person Names",
+  "keywords": [
+    "cldr",
+    "unicode",
+    "i18n",
+    "person",
+    "names",
+    "personNames",
+    "tr35",
+    "formatting"
+  ],
+  "license": "Unicode-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/golter-jp/cldr-person-names.git"
+  },
+  "type": "module",
+  "bin": {
+    "cldr-person-names-extract-likely-subtags": "./dist/extract-likely-subtags.js"
+  },
+  "exports": {
+    ".": {
+      "node": {
+        "types": "./dist/node.d.ts",
+        "default": "./dist/node.js"
+      },
+      "types": "./dist/browser.d.ts",
+      "default": "./dist/browser.js"
+    },
+    "./core": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./node": {
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "default": "./dist/browser.js"
+    },
+    "./browser/full": {
+      "types": "./dist/browser-full.d.ts",
+      "default": "./dist/browser-full.js"
+    },
+    "./burmese": {
+      "types": "./dist/burmese.d.ts",
+      "default": "./dist/burmese.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE.md"
+  ],
+  "scripts": {
+    "prepare": "tsup",
+    "lint": "eslint . --fix --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:package": "publint && attw --pack --profile esm-only && node scripts/smoke-package.ts"
+  },
+  "dependencies": {
+    "cldr-core": "48.2.0",
+    "cldr-person-names-full": "48.2.0"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@types/node": "^22.20.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^10.8.0",
+    "neostandard": "0.14.0-next",
+    "publint": "^0.3.23",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  },
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=22.18"
+  }
+}

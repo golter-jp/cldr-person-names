@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
+        with:
+          # The engines.node floor exactly, so CI exercises the oldest Node we
+          # claim to support. The test job below covers the latest of each major.
+          runtime: node@22.18.0
+          cache: true
+          install: false
+      - name: Install dependencies and build package
+        run: pnpm install --frozen-lockfile
+      - name: Cache CLDR conformance data
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: test/data
+          key: cldr-testdata-${{ hashFiles('scripts/fetch-test-data.ts') }}
+      - name: Lint
+        run: pnpm lint
+      - name: Verify lint made no changes
+        run: git diff --exit-code
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Report coverage
+        run: pnpm test:coverage
+      - name: Test the published package
+        run: pnpm test:package
+
+  test:
+    name: Test (Node.js ${{ matrix.node-version }})
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24, 26]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
+        with:
+          runtime: node@${{ matrix.node-version }}
+          cache: true
+          install: false
+      - name: Install dependencies and build package
+        run: pnpm install --frozen-lockfile
+      - name: Cache CLDR conformance data
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: test/data
+          key: cldr-testdata-${{ hashFiles('scripts/fetch-test-data.ts') }}
+      - name: Test
+        run: pnpm test
