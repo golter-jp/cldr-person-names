@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up pnpm and Node.js
-        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
+        uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
         with:
           # The engines.node floor exactly, so CI exercises the oldest Node we
           # claim to support. The test job below covers the latest of each major.
@@ -63,7 +63,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up pnpm and Node.js
-        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
+        uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
         with:
           runtime: node@${{ matrix.node-version }}
           cache: true
